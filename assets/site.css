@@ -1,0 +1,579 @@
+/*
+ * Rêve & Réalités : finitions visuelles.
+ * Additif uniquement : palette, mise en page et composants restent ceux de la maquette.
+ * Pour tout désactiver d'un coup : retirer <link href="assets/site.css"> des 4 pages.
+ */
+
+/* Défilement fluide vers les ancres (le décalage sous le header est géré par scroll-mt-*) */
+html { scroll-behavior: smooth; }
+
+/* Coupes de lignes plus équilibrées dans les titres et paragraphes */
+h1, h2, h3, h4 { text-wrap: balance; }
+p, li { text-wrap: pretty; }
+
+/* Focus clavier visible et cohérent (or de la charte).
+   Les champs de formulaire, le hamburger et la FAQ gardent leur propre anneau Tailwind. */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #735c00;
+  outline-offset: 3px;
+}
+.bg-primary a:focus-visible,
+.bg-primary button:focus-visible,
+.focus-on-dark a:focus-visible,
+.focus-on-dark button:focus-visible {
+  outline-color: #ffe088;
+}
+
+/* Header : plus lisible une fois la page défilée (classe posée par assets/site.js) */
+header { transition: background-color .3s ease, box-shadow .3s ease; }
+/* Header net dès le haut de page (il était translucide et virait au rose poussiéreux sur le hero sombre) */
+header.fixed { background-color: rgba(252, 249, 244, .94); }
+header.is-scrolled {
+  background-color: rgba(252, 249, 244, .96);
+  box-shadow: 0 12px 32px -16px rgba(75, 7, 17, .16);
+}
+
+/* Navigation desktop : filet doré fin (lien éditorial de la charte) au survol et sur la page courante */
+header > div:not(#mobile-menu) > nav a { position: relative; }
+header > div:not(#mobile-menu) > nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: #735c00;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .3s ease;
+}
+header > div:not(#mobile-menu) > nav a:hover::after,
+header > div:not(#mobile-menu) > nav a[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+/* Cartes de prestations : léger soulèvement au survol (elles ont déjà transition-all) */
+article.group:hover { transform: translateY(-4px); }
+
+/* Boutons primaires : retour tactile à l'appui */
+a[class*="bg-primary"]:active,
+button[class*="bg-primary"]:active { transform: translateY(1px); }
+
+/* États d'envoi du formulaire */
+button:disabled { cursor: not-allowed; opacity: .7; }
+button[aria-busy="true"] { cursor: progress; }
+
+/* Sous-titre de la marque dans le header : Arial est plus large que la police d'origine,
+   on resserre l'espacement sur petits écrans pour qu'il reste sur une seule ligne. */
+@media (max-width: 480px) {
+  header a.flex-col > span:last-child { letter-spacing: .12em; white-space: nowrap; }
+}
+@media (max-width: 400px) {
+  header a.flex-col > span:last-child { font-size: 9px; letter-spacing: .1em; }
+}
+@media (max-width: 380px) {
+  header a.flex-col > span:first-child { font-size: 19px; line-height: 26px; }
+}
+
+/* Mobile : zones de tap plus confortables dans le footer */
+@media (max-width: 767px) {
+  footer a { padding-block: .3rem; }
+}
+
+/* ---------------------------------------------------------------------------
+   Améliorations de design (additives)
+   --------------------------------------------------------------------------- */
+
+/* Barre de défilement fine aux couleurs de la marque (la maquette la masquait totalement) */
+html { scrollbar-width: thin; scrollbar-color: #681e24 #f0ede9; }
+::-webkit-scrollbar { display: block; width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #f0ede9; }
+::-webkit-scrollbar-thumb { background: #681e24; border-radius: 999px; border: 2px solid #f0ede9; }
+::-webkit-scrollbar-thumb:hover { background: #4b0711; }
+
+/* Apparition douce des sections au défilement.
+   Uniquement si le JavaScript est actif (classe .rr-reveal posée par assets/site.js) :
+   sans JS, ou avec « réduire les animations », tout reste visible. Seuls les contenus des
+   sections bougent, jamais la section elle-même (les ancres restent exactes). */
+.rr-reveal [data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .8s cubic-bezier(.2, .7, .2, 1), transform .8s cubic-bezier(.2, .7, .2, 1);
+}
+.rr-reveal .is-visible > [data-reveal] { opacity: 1; transform: none; }
+@media print {
+  .rr-reveal [data-reveal] { opacity: 1 !important; transform: none !important; }
+}
+
+/* Cartes à fond au survol : léger soulèvement (elles ne changeaient que de couleur) */
+.hover\:bg-surface-container.rounded-xl {
+  transition: transform .3s ease, box-shadow .3s ease, background-color .3s ease;
+}
+.hover\:bg-surface-container.rounded-xl:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 36px -18px rgba(75, 7, 17, .22);
+}
+
+/* Bouton « retour en haut » (créé par assets/site.js) */
+.rr-top {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 40;
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #4b0711;
+  color: #fff;
+  box-shadow: 0 10px 25px -8px rgba(75, 7, 17, .5);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity .3s ease, transform .3s ease, background-color .3s ease, visibility 0s linear .3s;
+}
+.rr-top.is-on {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity .3s ease, transform .3s ease, background-color .3s ease;
+}
+.rr-top:hover { background: #681e24; }
+
+/* ---------------------------------------------------------------------------
+   Améliorations de design, 2e vague
+   --------------------------------------------------------------------------- */
+
+/* Hero de l'accueil : entrée en douceur du contenu, cadre doré fin */
+@keyframes rr-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+section.focus-on-dark > div.relative > * { animation: rr-rise .9s cubic-bezier(.2, .7, .2, 1) backwards; }
+section.focus-on-dark > div.relative > *:nth-child(1) { animation-delay: .05s; }
+section.focus-on-dark > div.relative > *:nth-child(2) { animation-delay: .18s; }
+section.focus-on-dark > div.relative > *:nth-child(3) { animation-delay: .32s; }
+section.focus-on-dark > div.relative > *:nth-child(4) { animation-delay: .46s; }
+section.focus-on-dark > div.relative > *:nth-child(5) { animation-delay: .6s; }
+section.focus-on-dark:first-child::after {
+  content: "";
+  position: absolute;
+  inset: 5.75rem 1.5rem 1.5rem;
+  border: 1px solid rgba(233, 195, 73, .3);
+  pointer-events: none;
+}
+@media (max-width: 767px) {
+  section.focus-on-dark:first-child::after { inset: 5.25rem .75rem .75rem; }
+}
+
+/* Étapes « De votre idée à la réalité » : trait pointillé doré entre les cartes (bureau et tablette) */
+@media (min-width: 768px) {
+  .md\:grid-cols-5 > div:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    width: 2rem;
+    height: 1px;
+    background: repeating-linear-gradient(90deg, #c9a227 0 4px, transparent 4px 8px);
+  }
+}
+
+/* Boutons pleins : reflet lumineux au survol */
+a.inline-flex[class*="bg-primary"],
+button[class*="bg-primary"] { position: relative; overflow: hidden; isolation: isolate; }
+a.inline-flex[class*="bg-primary"]::before,
+button[class*="bg-primary"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 40%;
+  z-index: -1;
+  transform: skewX(-20deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .22), transparent);
+  transition: left .7s ease;
+  pointer-events: none;
+}
+a.inline-flex[class*="bg-primary"]:hover::before,
+button[class*="bg-primary"]:hover::before { left: 130%; }
+
+/* Pied de page : filet doré en tête */
+footer { border-top: 1px solid rgba(201, 162, 39, .35); }
+
+/* Lien d'évitement (créé par assets/site.js), visible au focus clavier */
+.rr-skip {
+  position: fixed;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  padding: .6rem 1rem;
+  border-radius: 4px;
+  background: #4b0711;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-decoration: none;
+  transition: top .2s ease;
+}
+.rr-skip:focus { top: 1rem; }
+main:focus { outline: none; }
+
+/* Galerie : photos agrandissables (lightbox créée par assets/site.js) */
+.gallery-item[role="button"] { cursor: zoom-in; }
+.gallery-item::after {
+  content: "zoom_in";
+  font-family: "Material Symbols Outlined";
+  font-size: 22px;
+  line-height: 1;
+  position: absolute;
+  top: .75rem;
+  right: .75rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: rgba(252, 249, 244, .92);
+  color: #4b0711;
+  opacity: 0;
+  transform: scale(.85);
+  transition: opacity .3s ease, transform .3s ease;
+  pointer-events: none;
+}
+.gallery-item:hover::after,
+.gallery-item:focus-visible::after { opacity: 1; transform: none; }
+.gallery-item:focus-visible { outline: 2px solid #735c00; outline-offset: 3px; }
+.gallery-item:focus-visible > div { opacity: 1; }
+
+.rr-lb[hidden] { display: none; }
+.rr-lb {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 1rem 1rem;
+  background: rgba(20, 4, 7, .98);
+  animation: rr-lb-in .25s ease backwards;
+}
+@keyframes rr-lb-in { from { opacity: 0; } to { opacity: 1; } }
+html.rr-lb-open { overflow: hidden; }
+.rr-lb-fig { margin: 0; max-width: min(92vw, 1100px); display: flex; flex-direction: column; align-items: center; gap: .9rem; }
+.rr-lb-img { max-width: 100%; max-height: 74vh; width: auto; height: auto; object-fit: contain; border-radius: 6px; box-shadow: 0 30px 80px -20px rgba(0, 0, 0, .7); background: #2a221a; }
+.rr-lb-cap { display: flex; flex-direction: column; align-items: center; gap: .25rem; text-align: center; color: #f3f0eb; }
+.rr-lb-label { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #ffe088; font-weight: 600; }
+.rr-lb-title { font-size: 20px; font-weight: 600; }
+.rr-lb-count { font-size: 12px; letter-spacing: .12em; color: rgba(243, 240, 235, .65); }
+.rr-lb-btn {
+  position: absolute;
+  z-index: 2;
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(252, 249, 244, .12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, .25);
+  cursor: pointer;
+  transition: background-color .25s ease;
+}
+.rr-lb-btn:hover { background: rgba(252, 249, 244, .28); }
+.rr-lb-btn:focus-visible { outline: 2px solid #ffe088; outline-offset: 3px; }
+.rr-lb-close { top: .9rem; right: .9rem; }
+.rr-lb-prev { left: .9rem; top: 50%; margin-top: -24px; }
+.rr-lb-next { right: .9rem; top: 50%; margin-top: -24px; }
+@media (max-width: 767px) {
+  .rr-lb { padding: 4rem .5rem 1rem; }
+  .rr-lb-img { max-height: 66vh; }
+  .rr-lb-prev, .rr-lb-next { top: auto; bottom: 1rem; margin-top: 0; }
+  .rr-lb-prev { left: 1rem; }
+  .rr-lb-next { right: 1rem; }
+}
+
+/* Mobile : barre d'actions rapides (Appeler / Demander un devis), créée par assets/site.js */
+.rr-bar { display: none; }
+@media (max-width: 767px) {
+  .rr-bar {
+    display: flex;
+    gap: .5rem;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 45;
+    padding: .5rem .75rem calc(.5rem + env(safe-area-inset-bottom, 0px));
+    background: rgba(252, 249, 244, .96);
+    box-shadow: 0 -10px 30px -12px rgba(75, 7, 17, .25);
+    transform: translateY(110%);
+    visibility: hidden;
+    transition: transform .35s cubic-bezier(.2, .7, .2, 1), visibility 0s linear .35s;
+  }
+  .rr-bar.is-on { transform: none; visibility: visible; transition: transform .35s cubic-bezier(.2, .7, .2, 1); }
+  .rr-bar a {
+    white-space: nowrap;
+    flex: 1;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .rr-bar .material-symbols-outlined { font-size: 20px; }
+  .rr-bar-call { flex: .8 !important; }
+  .rr-bar-quote { flex: 1.5 !important; }
+  .rr-bar-call { background: #fff; color: #4b0711; border: 1px solid rgba(75, 7, 17, .22); }
+  .rr-bar-quote { background: #4b0711; color: #fff; }
+  .rr-has-bar body { padding-bottom: 64px; }
+  .rr-has-bar .rr-top { bottom: 78px; }
+  .rr-lb-open .rr-bar { display: none; }
+  p { -webkit-hyphens: auto; hyphens: auto; }
+}
+
+
+/* ---------------------------------------------------------------------------
+   Univers « décoration d'événements » (motifs SVG intégrés, aucun fichier externe)
+   Guirlande de lumières, ballons, arcade festonnée (l'arche du logo), fleuron, branches dorées.
+   --------------------------------------------------------------------------- */
+
+/* Guirlande de lumières qui scintillent, en haut de chaque page (classe .rr-garland posée par site.js) */
+.rr-garland { position: relative; }
+.rr-garland::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='36' viewBox='0 0 160 36'%3E%3Cpath d='M0,3 Q80,34 160,3' fill='none' stroke='%23c9a227' stroke-opacity='.7' stroke-width='1'/%3E%3Cline x1='16.0' y1='8.6' x2='16.0' y2='13.1' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='16.0' cy='15.6' r='7.5' fill='%23ffe088' opacity='.2'%3E%3Canimate attributeName='opacity' values='.08;.42;.08' dur='2.6s' begin='0s' repeatCount='indefinite'/%3E%3C/circle%3E%3Ccircle cx='16.0' cy='15.6' r='2.8' fill='%23ffe088'%3E%3Canimate attributeName='opacity' values='.7;1;.7' dur='2.6s' begin='0s' repeatCount='indefinite'/%3E%3C/circle%3E%3Cline x1='40.0' y1='14.6' x2='40.0' y2='19.1' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='40.0' cy='21.6' r='7.5' fill='%23ffd1cf' opacity='.2'%3E%3Canimate attributeName='opacity' values='.08;.42;.08' dur='3.1s' begin='0.6s' repeatCount='indefinite'/%3E%3C/circle%3E%3Ccircle cx='40.0' cy='21.6' r='2.8' fill='%23ffd1cf'%3E%3Canimate attributeName='opacity' values='.7;1;.7' dur='3.1s' begin='0.6s' repeatCount='indefinite'/%3E%3C/circle%3E%3Cline x1='64.0' y1='17.9' x2='64.0' y2='22.4' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='64.0' cy='24.9' r='7.5' fill='%23ffe088' opacity='.2'%3E%3Canimate attributeName='opacity' values='.08;.42;.08' dur='2.4s' begin='1.3s' repeatCount='indefinite'/%3E%3C/circle%3E%3Ccircle cx='64.0' cy='24.9' r='2.8' fill='%23ffe088'%3E%3Canimate attributeName='opacity' values='.7;1;.7' dur='2.4s' begin='1.3s' repeatCount='indefinite'/%3E%3C/circle%3E%3Cline x1='80.0' y1='18.5' x2='80.0' y2='23.0' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='80.0' cy='25.5' r='7.5' fill='%23fff2c2' opacity='.2'%3E%3Canimate attributeName='opacity' values='.08;.42;.08' dur='3.4s' begin='0.3s' repeatCount='indefinite'/%3E%3C/circle%3E%3Ccircle cx='80.0' cy='25.5' r='2.8' fill='%23fff2c2'%3E%3Canimate attributeName='opacity' values='.7;1;.7' dur='3.4s' begin='0.3s' repeatCount='indefinite'/%3E%3C/circle%3E%3Cline x1='96.0' y1='17.9' x2='96.0' y2='22.4' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='96.0' cy='24.9' r='7.5' fill='%23ffe088' opacity='.2'%3E%3Canimate attributeName='opacity' values='.08;.42;.08' dur='2.8s' begin='1.8s' repeatCount='indefinite'/%3E%3C/circle%3E%3Ccircle cx='96.0' cy='24.9' r='2.8' fill='%23ffe088'%3E%3Canimate attributeName='opacity' values='.7;1;.7' dur='2.8s' begin='1.8s' repeatCount='indefinite'/%3E%3C/circle%3E%3Cline x1='120.0' y1='14.6' x2='120.0' y2='19.1' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='120.0' cy='21.6' r='7.5' fill='%23ffd1cf' opacity='.2'%3E%3Canimate attributeName='opacity' values='.08;.42;.08' dur='3s' begin='0.9s' repeatCount='indefinite'/%3E%3C/circle%3E%3Ccircle cx='120.0' cy='21.6' r='2.8' fill='%23ffd1cf'%3E%3Canimate attributeName='opacity' values='.7;1;.7' dur='3s' begin='0.9s' repeatCount='indefinite'/%3E%3C/circle%3E%3Cline x1='144.0' y1='8.6' x2='144.0' y2='13.1' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='144.0' cy='15.6' r='7.5' fill='%23ffe088' opacity='.2'%3E%3Canimate attributeName='opacity' values='.08;.42;.08' dur='2.5s' begin='2.1s' repeatCount='indefinite'/%3E%3C/circle%3E%3Ccircle cx='144.0' cy='15.6' r='2.8' fill='%23ffe088'%3E%3Canimate attributeName='opacity' values='.7;1;.7' dur='2.5s' begin='2.1s' repeatCount='indefinite'/%3E%3C/circle%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 160px 36px;
+  pointer-events: none;
+  z-index: 2;
+}
+section.focus-on-dark:first-child.rr-garland::before { top: 5rem; }
+footer { position: relative; }
+footer::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='36' viewBox='0 0 160 36'%3E%3Cpath d='M0,3 Q80,34 160,3' fill='none' stroke='%23c9a227' stroke-opacity='.7' stroke-width='1'/%3E%3Cline x1='16.0' y1='8.6' x2='16.0' y2='13.1' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='16.0' cy='15.6' r='7.5' fill='%23ffe088' opacity='.2'%3E%3Canimate attributeName='opacity' values='.08;.42;.08' dur='2.6s' begin='0s' repeatCount='indefinite'/%3E%3C/circle%3E%3Ccircle cx='16.0' cy='15.6' r='2.8' fill='%23ffe088'%3E%3Canimate attributeName='opacity' values='.7;1;.7' dur='2.6s' begin='0s' repeatCount='indefinite'/%3E%3C/circle%3E%3Cline x1='40.0' y1='14.6' x2='40.0' y2='19.1' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='40.0' cy='21.6' r='7.5' fill='%23ffd1cf' opacity='.2'%3E%3Canimate attributeName='opacity' values='.08;.42;.08' dur='3.1s' begin='0.6s' repeatCount='indefinite'/%3E%3C/circle%3E%3Ccircle cx='40.0' cy='21.6' r='2.8' fill='%23ffd1cf'%3E%3Canimate attributeName='opacity' values='.7;1;.7' dur='3.1s' begin='0.6s' repeatCount='indefinite'/%3E%3C/circle%3E%3Cline x1='64.0' y1='17.9' x2='64.0' y2='22.4' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='64.0' cy='24.9' r='7.5' fill='%23ffe088' opacity='.2'%3E%3Canimate attributeName='opacity' values='.08;.42;.08' dur='2.4s' begin='1.3s' repeatCount='indefinite'/%3E%3C/circle%3E%3Ccircle cx='64.0' cy='24.9' r='2.8' fill='%23ffe088'%3E%3Canimate attributeName='opacity' values='.7;1;.7' dur='2.4s' begin='1.3s' repeatCount='indefinite'/%3E%3C/circle%3E%3Cline x1='80.0' y1='18.5' x2='80.0' y2='23.0' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='80.0' cy='25.5' r='7.5' fill='%23fff2c2' opacity='.2'%3E%3Canimate attributeName='opacity' values='.08;.42;.08' dur='3.4s' begin='0.3s' repeatCount='indefinite'/%3E%3C/circle%3E%3Ccircle cx='80.0' cy='25.5' r='2.8' fill='%23fff2c2'%3E%3Canimate attributeName='opacity' values='.7;1;.7' dur='3.4s' begin='0.3s' repeatCount='indefinite'/%3E%3C/circle%3E%3Cline x1='96.0' y1='17.9' x2='96.0' y2='22.4' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='96.0' cy='24.9' r='7.5' fill='%23ffe088' opacity='.2'%3E%3Canimate attributeName='opacity' values='.08;.42;.08' dur='2.8s' begin='1.8s' repeatCount='indefinite'/%3E%3C/circle%3E%3Ccircle cx='96.0' cy='24.9' r='2.8' fill='%23ffe088'%3E%3Canimate attributeName='opacity' values='.7;1;.7' dur='2.8s' begin='1.8s' repeatCount='indefinite'/%3E%3C/circle%3E%3Cline x1='120.0' y1='14.6' x2='120.0' y2='19.1' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='120.0' cy='21.6' r='7.5' fill='%23ffd1cf' opacity='.2'%3E%3Canimate attributeName='opacity' values='.08;.42;.08' dur='3s' begin='0.9s' repeatCount='indefinite'/%3E%3C/circle%3E%3Ccircle cx='120.0' cy='21.6' r='2.8' fill='%23ffd1cf'%3E%3Canimate attributeName='opacity' values='.7;1;.7' dur='3s' begin='0.9s' repeatCount='indefinite'/%3E%3C/circle%3E%3Cline x1='144.0' y1='8.6' x2='144.0' y2='13.1' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='144.0' cy='15.6' r='7.5' fill='%23ffe088' opacity='.2'%3E%3Canimate attributeName='opacity' values='.08;.42;.08' dur='2.5s' begin='2.1s' repeatCount='indefinite'/%3E%3C/circle%3E%3Ccircle cx='144.0' cy='15.6' r='2.8' fill='%23ffe088'%3E%3Canimate attributeName='opacity' values='.7;1;.7' dur='2.5s' begin='2.1s' repeatCount='indefinite'/%3E%3C/circle%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 160px 36px;
+  opacity: .8;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rr-garland::before, footer::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='36' viewBox='0 0 160 36'%3E%3Cpath d='M0,3 Q80,34 160,3' fill='none' stroke='%23c9a227' stroke-opacity='.7' stroke-width='1'/%3E%3Cline x1='16.0' y1='8.6' x2='16.0' y2='13.1' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='16.0' cy='15.6' r='7.5' fill='%23ffe088' opacity='.2'%3E%3C/circle%3E%3Ccircle cx='16.0' cy='15.6' r='2.8' fill='%23ffe088'%3E%3C/circle%3E%3Cline x1='40.0' y1='14.6' x2='40.0' y2='19.1' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='40.0' cy='21.6' r='7.5' fill='%23ffd1cf' opacity='.2'%3E%3C/circle%3E%3Ccircle cx='40.0' cy='21.6' r='2.8' fill='%23ffd1cf'%3E%3C/circle%3E%3Cline x1='64.0' y1='17.9' x2='64.0' y2='22.4' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='64.0' cy='24.9' r='7.5' fill='%23ffe088' opacity='.2'%3E%3C/circle%3E%3Ccircle cx='64.0' cy='24.9' r='2.8' fill='%23ffe088'%3E%3C/circle%3E%3Cline x1='80.0' y1='18.5' x2='80.0' y2='23.0' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='80.0' cy='25.5' r='7.5' fill='%23fff2c2' opacity='.2'%3E%3C/circle%3E%3Ccircle cx='80.0' cy='25.5' r='2.8' fill='%23fff2c2'%3E%3C/circle%3E%3Cline x1='96.0' y1='17.9' x2='96.0' y2='22.4' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='96.0' cy='24.9' r='7.5' fill='%23ffe088' opacity='.2'%3E%3C/circle%3E%3Ccircle cx='96.0' cy='24.9' r='2.8' fill='%23ffe088'%3E%3C/circle%3E%3Cline x1='120.0' y1='14.6' x2='120.0' y2='19.1' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='120.0' cy='21.6' r='7.5' fill='%23ffd1cf' opacity='.2'%3E%3C/circle%3E%3Ccircle cx='120.0' cy='21.6' r='2.8' fill='%23ffd1cf'%3E%3C/circle%3E%3Cline x1='144.0' y1='8.6' x2='144.0' y2='13.1' stroke='%23c9a227' stroke-opacity='.7'/%3E%3Ccircle cx='144.0' cy='15.6' r='7.5' fill='%23ffe088' opacity='.2'%3E%3C/circle%3E%3Ccircle cx='144.0' cy='15.6' r='2.8' fill='%23ffe088'%3E%3C/circle%3E%3C/svg%3E"); }
+}
+
+/* Ballons qui s'élèvent doucement dans le hero (créés par site.js, purement décoratifs) */
+.rr-balloons { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; }
+.rr-balloon {
+  position: absolute;
+  bottom: -110px;
+  width: var(--s, 44px);
+  height: calc(var(--s, 44px) * 1.22);
+  border-radius: 50% 50% 48% 48% / 58% 58% 42% 42%;
+  background: radial-gradient(circle at 32% 26%, rgba(255, 255, 255, .75), rgba(255, 255, 255, 0) 38%), var(--c, #e9c349);
+  box-shadow: inset -6px -8px 14px rgba(0, 0, 0, .18);
+  opacity: .5;
+  animation: rr-float var(--d, 34s) linear var(--w, 0s) infinite;
+}
+.rr-balloon::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 1px;
+  height: 70px;
+  background: linear-gradient(rgba(255, 255, 255, .55), transparent);
+}
+.rr-balloon::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 97%;
+  width: 9px;
+  height: 8px;
+  margin-left: -4.5px;
+  background: var(--c, #e9c349);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+@keyframes rr-float {
+  0%   { transform: translate3d(0, 0, 0) rotate(-3deg); }
+  25%  { transform: translate3d(16px, -32vh, 0) rotate(3deg); }
+  50%  { transform: translate3d(-12px, -66vh, 0) rotate(-2deg); }
+  75%  { transform: translate3d(14px, -100vh, 0) rotate(3deg); }
+  100% { transform: translate3d(0, -140vh, 0) rotate(-3deg); }
+}
+.rr-balloon:nth-child(1) { left: 5%;  --s: 52px; --c: #e9c349; --d: 36s; --w: -6s; }
+.rr-balloon:nth-child(2) { left: 15%; --s: 34px; --c: #eb8487; --d: 30s; --w: -19s; }
+.rr-balloon:nth-child(3) { left: 27%; --s: 40px; --c: #f3f0eb; --d: 40s; --w: -28s; }
+.rr-balloon:nth-child(4) { left: 71%; --s: 38px; --c: #ffb3b3; --d: 33s; --w: -11s; }
+.rr-balloon:nth-child(5) { left: 84%; --s: 56px; --c: #ffe088; --d: 38s; --w: -24s; }
+.rr-balloon:nth-child(6) { left: 93%; --s: 36px; --c: #994347; --d: 29s; --w: -3s; }
+@media (max-width: 767px) {
+  .rr-balloon:nth-child(n+4) { display: none; }
+  .rr-balloon { opacity: .4; }
+}
+
+/* Arcade festonnée au bas du hero (rappel de l'arche du logo) */
+.rr-scallop {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 22px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='22' viewBox='0 0 64 22'%3E%3Cpath d='M0,22 C0,9 14,1 32,1 C50,1 64,9 64,22 Z' fill='%23fcf9f4'/%3E%3Cpath d='M0,22 C0,9 14,1 32,1 C50,1 64,9 64,22' fill='none' stroke='%23c9a227' stroke-opacity='.55'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 64px 22px;
+  pointer-events: none;
+  z-index: 2;
+}
+section.focus-on-dark:first-child::after { inset: 5.75rem 1.5rem 2.5rem; }
+@media (max-width: 767px) {
+  section.focus-on-dark:first-child::after { inset: 5.25rem .75rem 2.25rem; }
+}
+
+/* Images en arche (forme du logo) avec double filet doré concentrique */
+.rr-arch.rounded-xl { border-radius: 999px 999px 12px 12px; }
+.rr-arch.rounded { border-radius: 999px 999px 6px 6px; }
+.rr-arch-frame::before {
+  content: "";
+  position: absolute;
+  inset: -12px;
+  border: 1px solid rgba(201, 162, 39, .55);
+  border-radius: 999px 999px 16px 16px;
+  box-shadow: 0 0 0 11px #fcf9f4, 0 0 0 12px rgba(201, 162, 39, .28);
+  pointer-events: none;
+}
+
+/* Fleuron doré sous les titres de section centrés (remplace le simple filet) */
+.text-center > h2::after {
+  content: "";
+  display: block;
+  width: 132px;
+  height: 22px;
+  margin: 14px auto 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='132' height='22' viewBox='0 0 132 22'%3E%3Cg fill='none' stroke='%23c9a227' stroke-width='1'%3E%3Cpath d='M4,11 H52' stroke-opacity='.85'/%3E%3Cpath d='M80,11 H128' stroke-opacity='.85'/%3E%3Ccircle cx='66' cy='6.4' r='4.2'/%3E%3Ccircle cx='66' cy='15.6' r='4.2'/%3E%3Ccircle cx='61.4' cy='11' r='4.2'/%3E%3Ccircle cx='70.6' cy='11' r='4.2'/%3E%3Ccircle cx='55.5' cy='11' r='1.1' fill='%23c9a227'/%3E%3Ccircle cx='76.5' cy='11' r='1.1' fill='%23c9a227'/%3E%3C/g%3E%3Ccircle cx='66' cy='11' r='1.8' fill='%23c9a227'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* Branches fleuries dorées dans les bandeaux bordeaux */
+section.bg-primary::before,
+section.bg-primary::after,
+div.focus-on-dark.rounded-2xl::before,
+div.focus-on-dark.rounded-2xl::after {
+  content: "";
+  position: absolute;
+  width: 200px;
+  height: 290px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='320' viewBox='0 0 220 320'%3E%3Cg fill='none' stroke='%23e9c349' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M18,312 C58,244 38,170 104,120 S186,44 200,12'/%3E%3Cg transform='translate(30 280) rotate(-160)'%3E%3Cpath d='M0,0 Q11,-6.5 22,0 Q11,6.5 0,0 Z'/%3E%3Cpath d='M2,0 H19' stroke-opacity='.6'/%3E%3C/g%3E%3Cg transform='translate(34 268) rotate(-20)'%3E%3Cpath d='M0,0 Q11,-6.5 22,0 Q11,6.5 0,0 Z'/%3E%3Cpath d='M2,0 H19' stroke-opacity='.6'/%3E%3C/g%3E%3Cg transform='translate(46 238) rotate(-165)'%3E%3Cpath d='M0,0 Q11,-6.5 22,0 Q11,6.5 0,0 Z'/%3E%3Cpath d='M2,0 H19' stroke-opacity='.6'/%3E%3C/g%3E%3Cg transform='translate(50 226) rotate(-25)'%3E%3Cpath d='M0,0 Q11,-6.5 22,0 Q11,6.5 0,0 Z'/%3E%3Cpath d='M2,0 H19' stroke-opacity='.6'/%3E%3C/g%3E%3Cg transform='translate(50 196) rotate(-170)'%3E%3Cpath d='M0,0 Q11,-6.5 22,0 Q11,6.5 0,0 Z'/%3E%3Cpath d='M2,0 H19' stroke-opacity='.6'/%3E%3C/g%3E%3Cg transform='translate(62 176) rotate(-30)'%3E%3Cpath d='M0,0 Q11,-6.5 22,0 Q11,6.5 0,0 Z'/%3E%3Cpath d='M2,0 H19' stroke-opacity='.6'/%3E%3C/g%3E%3Cg transform='translate(76 150) rotate(-165)'%3E%3Cpath d='M0,0 Q11,-6.5 22,0 Q11,6.5 0,0 Z'/%3E%3Cpath d='M2,0 H19' stroke-opacity='.6'/%3E%3C/g%3E%3Cg transform='translate(92 132) rotate(-45)'%3E%3Cpath d='M0,0 Q11,-6.5 22,0 Q11,6.5 0,0 Z'/%3E%3Cpath d='M2,0 H19' stroke-opacity='.6'/%3E%3C/g%3E%3Cg transform='translate(112 116) rotate(-150)'%3E%3Cpath d='M0,0 Q11,-6.5 22,0 Q11,6.5 0,0 Z'/%3E%3Cpath d='M2,0 H19' stroke-opacity='.6'/%3E%3C/g%3E%3Cg transform='translate(126 102) rotate(-55)'%3E%3Cpath d='M0,0 Q11,-6.5 22,0 Q11,6.5 0,0 Z'/%3E%3Cpath d='M2,0 H19' stroke-opacity='.6'/%3E%3C/g%3E%3Cg transform='translate(146 84) rotate(-150)'%3E%3Cpath d='M0,0 Q11,-6.5 22,0 Q11,6.5 0,0 Z'/%3E%3Cpath d='M2,0 H19' stroke-opacity='.6'/%3E%3C/g%3E%3Cg transform='translate(160 70) rotate(-60)'%3E%3Cpath d='M0,0 Q11,-6.5 22,0 Q11,6.5 0,0 Z'/%3E%3Cpath d='M2,0 H19' stroke-opacity='.6'/%3E%3C/g%3E%3Cg transform='translate(176 54) rotate(-140)'%3E%3Cpath d='M0,0 Q11,-6.5 22,0 Q11,6.5 0,0 Z'/%3E%3Cpath d='M2,0 H19' stroke-opacity='.6'/%3E%3C/g%3E%3Cg transform='translate(188 38) rotate(-65)'%3E%3Cpath d='M0,0 Q11,-6.5 22,0 Q11,6.5 0,0 Z'/%3E%3Cpath d='M2,0 H19' stroke-opacity='.6'/%3E%3C/g%3E%3Cg transform='translate(200 12)'%3E%3Ccircle cx='0' cy='-7' r='5.2'/%3E%3Ccircle cx='6.7' cy='-2.2' r='5.2'/%3E%3Ccircle cx='4.1' cy='5.7' r='5.2'/%3E%3Ccircle cx='-4.1' cy='5.7' r='5.2'/%3E%3Ccircle cx='-6.7' cy='-2.2' r='5.2'/%3E%3Ccircle cx='0' cy='0' r='2' fill='%23e9c349'/%3E%3C/g%3E%3Cg transform='translate(160 70) scale(.62)'%3E%3Ccircle cx='0' cy='-7' r='5.2'/%3E%3Ccircle cx='6.7' cy='-2.2' r='5.2'/%3E%3Ccircle cx='4.1' cy='5.7' r='5.2'/%3E%3Ccircle cx='-4.1' cy='5.7' r='5.2'/%3E%3Ccircle cx='-6.7' cy='-2.2' r='5.2'/%3E%3Ccircle cx='0' cy='0' r='2' fill='%23e9c349'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+  opacity: .5;
+  pointer-events: none;
+}
+section.bg-primary::before,
+div.focus-on-dark.rounded-2xl::before { left: -14px; bottom: -22px; }
+section.bg-primary::after,
+div.focus-on-dark.rounded-2xl::after { right: -14px; top: -22px; transform: rotate(180deg) scaleX(-1); }
+@media (max-width: 767px) {
+  section.bg-primary::before, section.bg-primary::after,
+  div.focus-on-dark.rounded-2xl::before, div.focus-on-dark.rounded-2xl::after { width: 120px; height: 174px; opacity: .38; }
+}
+
+/* ---------------------------------------------------------------------------
+   Lisibilité renforcée
+   --------------------------------------------------------------------------- */
+/* Texte d'aide des champs : contraste suffisant (>= 4,5:1) */
+::placeholder { color: #6f5f5f; opacity: 1; }
+
+/* Légendes blanches posées sur des photos : ombre douce pour rester lisibles sur les images claires */
+.absolute.text-on-primary > span.italic,
+.absolute .text-on-primary p,
+.absolute .text-on-primary span {
+  text-shadow: 0 1px 10px rgba(20, 4, 7, .65), 0 0 2px rgba(20, 4, 7, .35);
+}
+
+/* ---------------------------------------------------------------------------
+   MOBILE (< 768 px) : titres et textes un peu plus petits, espacements resserrés,
+   page À propos allégée. Bureau et tablette ne changent pas.
+   (La classe est doublée pour l'emporter sur celles générées par Tailwind.)
+   --------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  /* Typographie */
+  .text-display-lg.text-display-lg     { font-size: 40px; line-height: 48px; }
+  .text-headline-xl.text-headline-xl   { font-size: 32px; line-height: 40px; }
+  .text-headline-lg.text-headline-lg   { font-size: 26px; line-height: 34px; }
+  .text-headline-md.text-headline-md   { font-size: 22px; line-height: 30px; }
+  .text-headline-sm.text-headline-sm   { font-size: 19px; line-height: 26px; }
+  .text-body-xl.text-body-xl           { font-size: 16px; line-height: 26px; }
+  .text-body-lg.text-body-lg           { font-size: 15px; line-height: 24px; }
+  .text-body-md.text-body-md:not(input):not(select):not(textarea) { font-size: 13.5px; line-height: 21px; }
+  .text-label-lg.text-label-lg         { font-size: 12px; line-height: 17px; }
+
+  /* Espacements */
+  .py-space-xl.py-space-xl { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+  .pt-space-xl.pt-space-xl { padding-top: 2.5rem; }
+  .pb-space-xl.pb-space-xl { padding-bottom: 2.5rem; }
+  .my-space-xl.my-space-xl { margin-top: 2.5rem; margin-bottom: 2.5rem; }
+  .mb-space-xl.mb-space-xl { margin-bottom: 2rem; }
+  .p-space-lg.p-space-lg   { padding: 1.5rem; }
+  .gap-gutter.gap-gutter   { gap: 1.25rem; }
+  section.focus-on-dark:first-child > div.relative { padding-top: 7.5rem; padding-bottom: 3.5rem; }
+}
+
+@media (max-width: 767px) {
+  /* À propos : navigation interne sur une seule ligne défilante (au lieu de 3 lignes de pastilles) */
+  nav[aria-label="Sur cette page"].flex {
+    flex-wrap: nowrap;
+    width: calc(100% + 3rem);
+    min-width: 0;
+    justify-content: flex-start;
+    overflow-x: auto;
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    padding: 0 1.5rem .25rem;
+    scroll-snap-type: x proximity;
+    scroll-padding-left: 1.5rem;
+    scrollbar-width: none;
+  }
+  nav[aria-label="Sur cette page"].flex::-webkit-scrollbar { display: none; }
+  nav[aria-label="Sur cette page"].flex > * { flex: 0 0 auto; scroll-snap-align: start; white-space: nowrap; }
+
+  /* À propos : images et cartes plus compactes */
+  .rr-arch.col-span-7 > img { height: 14rem; }
+  .rr-arch.col-span-5 > img { height: 11rem; }
+  img[src*="art-de-vous-servir"] { height: 15rem; }
+  #valeurs .grid > div > div.flex > span[aria-hidden="true"] { display: none; }
+  #valeurs .grid > div .w-12 { width: 2.5rem; height: 2.5rem; margin-bottom: 0; }
+  #presentation article .w-12 { width: 2.5rem; height: 2.5rem; }
+}
+
+/* Respect des préférences « réduire les animations » */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
